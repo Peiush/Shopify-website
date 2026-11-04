@@ -155,6 +155,17 @@ function HeaderCtas({
           </Await>
         </Suspense>
       </NavLink>
+      <Suspense fallback={null}>
+        <Await resolve={isLoggedIn} errorElement={null}>
+          {(isLoggedIn) =>
+            isLoggedIn ? null : (
+              <NavLink prefetch="intent" to="/account/signup" style={activeLinkStyle}>
+                Sign up
+              </NavLink>
+            )
+          }
+        </Await>
+      </Suspense>
       <SearchToggle />
       <CartToggle cart={cart} />
     </nav>

@@ -767,7 +767,8 @@ body > main > :not(.home) {
 
 /* Small phones: keep only menu, search and cart in the header */
 @media (max-width: 47.99em) {
-  .header-ctas > a[href='/account'] {
+  .header-ctas > a[href='/account'],
+  .header-ctas > a[href='/account/signup'] {
     display: none;
   }
 }
