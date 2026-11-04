@@ -1010,3 +1010,15 @@ main a[href*='checkout'] {
   color: var(--color-mute) !important;
 }
 }
+
+/* Airmail border for address "shipping label" cards */
+.airmail {
+  height: 10px;
+  background: repeating-linear-gradient(
+    135deg,
+    var(--color-volt) 0 14px,
+    var(--color-ink-2) 14px 22px,
+    var(--color-bone) 22px 36px,
+    var(--color-ink-2) 36px 44px
+  );
+}

@@ -69,6 +69,62 @@ export type CustomerAddressCreateMutation = {
   }>;
 };
 
+export type CustomerDashboardQueryVariables = CustomerAccountAPI.Exact<{
+  language?: CustomerAccountAPI.InputMaybe<CustomerAccountAPI.LanguageCode>;
+}>;
+
+export type CustomerDashboardQuery = {
+  customer: Pick<
+    CustomerAccountAPI.Customer,
+    'id' | 'firstName' | 'lastName' | 'creationDate'
+  > & {
+    emailAddress?: CustomerAccountAPI.Maybe<
+      Pick<CustomerAccountAPI.CustomerEmailAddress, 'emailAddress'>
+    >;
+    defaultAddress?: CustomerAccountAPI.Maybe<
+      Pick<
+        CustomerAccountAPI.CustomerAddress,
+        'id' | 'formatted' | 'city' | 'zoneCode' | 'territoryCode'
+      >
+    >;
+    addresses: {nodes: Array<Pick<CustomerAccountAPI.CustomerAddress, 'id'>>};
+    orders: {
+      nodes: Array<
+        Pick<
+          CustomerAccountAPI.Order,
+          | 'financialStatus'
+          | 'fulfillmentStatus'
+          | 'id'
+          | 'number'
+          | 'confirmationNumber'
+          | 'processedAt'
+        > & {
+          lineItems: {
+            nodes: Array<
+              Pick<CustomerAccountAPI.LineItem, 'title' | 'quantity'> & {
+                image?: CustomerAccountAPI.Maybe<
+                  Pick<
+                    CustomerAccountAPI.Image,
+                    'url' | 'altText' | 'width' | 'height'
+                  >
+                >;
+              }
+            >;
+          };
+          totalPrice: Pick<
+            CustomerAccountAPI.MoneyV2,
+            'amount' | 'currencyCode'
+          >;
+          fulfillments: {
+            nodes: Array<Pick<CustomerAccountAPI.Fulfillment, 'status'>>;
+          };
+        }
+      >;
+      pageInfo: Pick<CustomerAccountAPI.PageInfo, 'hasNextPage'>;
+    };
+  };
+};
+
 export type CustomerFragment = Pick<
   CustomerAccountAPI.Customer,
   'id' | 'firstName' | 'lastName'
@@ -504,6 +560,10 @@ export type CustomerUpdateMutation = {
 };
 
 interface GeneratedQueryTypes {
+  '#graphql\n  query CustomerDashboard($language: LanguageCode)\n  @inContext(language: $language) {\n    customer {\n      id\n      firstName\n      lastName\n      creationDate\n      emailAddress {\n        emailAddress\n      }\n      defaultAddress {\n        id\n        formatted\n        city\n        zoneCode\n        territoryCode\n      }\n      addresses(first: 20) {\n        nodes {\n          id\n        }\n      }\n      orders(first: 50, sortKey: PROCESSED_AT, reverse: true) {\n        nodes {\n          ...OrderItem\n          lineItems(first: 3) {\n            nodes {\n              title\n              quantity\n              image {\n                url\n                altText\n                width\n                height\n              }\n            }\n          }\n        }\n        pageInfo {\n          hasNextPage\n        }\n      }\n    }\n  }\n  #graphql\n  fragment OrderItem on Order {\n    totalPrice {\n      amount\n      currencyCode\n    }\n    financialStatus\n    fulfillmentStatus\n    fulfillments(first: 1) {\n      nodes {\n        status\n      }\n    }\n    id\n    number\n    confirmationNumber\n    processedAt\n  }\n\n': {
+    return: CustomerDashboardQuery;
+    variables: CustomerDashboardQueryVariables;
+  };
   '#graphql\n  query CustomerDetails($language: LanguageCode) @inContext(language: $language) {\n    customer {\n      ...Customer\n    }\n  }\n  #graphql\n  fragment Customer on Customer {\n    id\n    firstName\n    lastName\n    defaultAddress {\n      ...Address\n    }\n    addresses(first: 6) {\n      nodes {\n        ...Address\n      }\n    }\n  }\n  fragment Address on CustomerAddress {\n    id\n    formatted\n    firstName\n    lastName\n    company\n    address1\n    address2\n    territoryCode\n    zoneCode\n    city\n    zip\n    phoneNumber\n  }\n\n': {
     return: CustomerDetailsQuery;
     variables: CustomerDetailsQueryVariables;

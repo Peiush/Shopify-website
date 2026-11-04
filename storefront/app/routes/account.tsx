@@ -1,16 +1,11 @@
 import {useRef} from 'react';
-import {
-  data as remixData,
-  Form,
-  NavLink,
-  Outlet,
-  useLoaderData,
-} from 'react-router';
+import {data as remixData, Outlet, useLoaderData} from 'react-router';
 import type {Route} from './+types/account';
 import {CUSTOMER_DETAILS_QUERY} from '~/graphql/customer-account/CustomerDetailsQuery';
 import {CUSTOMER_UPDATE_MUTATION} from '~/graphql/customer-account/CustomerUpdateMutation';
 import {PENDING_PROFILE_KEY, type PendingProfile} from '~/lib/signup';
-import {PageHero} from '~/components/PageKit';
+import {AccountHero} from '~/components/AccountHero';
+import {memberNumber} from '~/lib/account';
 import {usePageMotion} from '~/components/Motion';
 
 export function shouldRevalidate() {
@@ -68,55 +63,14 @@ export default function AccountLayout() {
   const root = useRef<HTMLDivElement>(null);
   usePageMotion(root);
 
-  const heading = customer
-    ? customer.firstName
-      ? `Welcome, ${customer.firstName}`
-      : `Welcome back`
-    : 'Your account';
-
   return (
     <div className="account" ref={root}>
-      <PageHero
-        title={heading}
-        eyebrow="Member of the vault"
-        backdrop="VAULT"
-        crumbs={[{label: 'Home', to: '/'}, {label: 'Account'}]}
-      >
-        <div data-hero-fade className="mt-10">
-          <AccountMenu />
-        </div>
-      </PageHero>
+      <AccountHero
+        firstName={customer.firstName}
+        memberNo={memberNumber(customer.id)}
+        addressCount={customer.addresses.nodes.length}
+      />
       <Outlet context={{customer}} />
     </div>
-  );
-}
-
-function AccountMenu() {
-  const tab = ({isActive}: {isActive: boolean}) =>
-    `border-2 px-4 py-2.5 text-xs font-bold tracking-[0.18em] uppercase transition-colors duration-200 ${
-      isActive ? 'border-volt bg-volt text-on-volt' : 'border-ink-3 hover:border-bone'
-    }`;
-
-  return (
-    <nav role="navigation" aria-label="Account" className="flex flex-wrap items-center gap-2">
-      <NavLink to="/account/orders" className={tab}>
-        Orders
-      </NavLink>
-      <NavLink to="/account/profile" className={tab}>
-        Profile
-      </NavLink>
-      <NavLink to="/account/addresses" className={tab}>
-        Addresses
-      </NavLink>
-      <Logout />
-    </nav>
-  );
-}
-
-function Logout() {
-  return (
-    <Form className="account-logout" method="POST" action="/account/logout">
-      &nbsp;<button type="submit">Sign out</button>
-    </Form>
   );
 }
