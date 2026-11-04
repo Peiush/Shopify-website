@@ -94,10 +94,15 @@ export function HeaderMenu({
 }) {
   const className = `header-menu-${viewport}`;
   const {close} = useAside();
+  const items = (menu || FALLBACK_HEADER_MENU).items;
+  // The store menu usually has its own Home link; only add one when it doesn't
+  const menuHasHome = items.some(
+    (item) => item.url && new URL(item.url, 'https://x').pathname === '/',
+  );
 
   return (
     <nav className={className} role="navigation">
-      {viewport === 'mobile' && (
+      {viewport === 'mobile' && !menuHasHome && (
         <NavLink
           end
           onClick={close}
@@ -108,7 +113,7 @@ export function HeaderMenu({
           Home
         </NavLink>
       )}
-      {(menu || FALLBACK_HEADER_MENU).items.map((item) => {
+      {items.map((item) => {
         if (!item.url) return null;
 
         // if the url is internal, we strip the domain

@@ -226,7 +226,12 @@
 .rich-text strong { color: var(--color-bone); }
 .rich-text img { border: 2px solid var(--color-ink-3); }
 
-/* Mobile menu + drawers */
+/* Mobile menu + drawers.
+   Layer scale: page content <= 10, sticky bars 4-7, drawers 70,
+   grain 80, cursor 90, progress bar 95, preloader 100. */
+.overlay {
+  z-index: 70;
+}
 .header-menu-mobile {
   gap: 0.25rem !important;
 }
