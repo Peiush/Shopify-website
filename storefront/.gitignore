@@ -1,0 +1,16 @@
+node_modules
+.DS_Store
+
+# Build output and caches
+/.cache
+/build
+/dist
+/public/build
+/.mf
+.react-router
+tsconfig.tsbuildinfo
+
+# Secrets and local Shopify link
+.env
+.env.*
+.shopify

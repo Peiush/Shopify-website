@@ -1,0 +1,294 @@
+/**
+ * Configure Tailwind v4 in this file using CSS variables and directives:
+ * https://tailwindcss.com/docs/v4-beta#css-first-configuration
+ */
+
+@import 'tailwindcss';
+
+/*
+ * HYPEFORGE brand tokens.
+ * Every color/font here becomes a Tailwind utility automatically,
+ * e.g. --color-volt -> `bg-volt`, `text-volt`; --font-display -> `font-display`.
+ */
+@theme {
+  /* Light theme: warm off-white, deep navy, brick red, mustard gold */
+  --color-ink: #f4f1ec; /* page background */
+  --color-ink-2: #ffffff; /* cards / surfaces */
+  --color-ink-3: #ddd6cc; /* subtle borders */
+  --color-bone: #18214d; /* text, hard shadows, dark tape (navy) */
+  --color-mute: #5d6280; /* secondary text */
+  --color-volt: #c62f28; /* pop 1: buttons, highlights (brick red) */
+  --color-heat: #efb43f; /* pop 2: stickers, labels (mustard gold) */
+  /* Text/icons placed ON a volt fill (buttons, tapes, badges) */
+  --color-on-volt: #ffffff;
+  /* Hard outlines on stickers, tapes and badges */
+  --color-edge: #18214d;
+  /* Long-form paragraph text */
+  --color-body: #353c5e;
+
+  --font-display: 'Anton', 'Impact', sans-serif;
+  --font-sans: 'Space Grotesk', system-ui, sans-serif;
+
+  --animate-marquee: marquee 28s linear infinite;
+  --animate-rise: rise 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* Brutalist hard-offset shadows: `shadow-brutal`, `shadow-brutal-volt` */
+@utility shadow-brutal {
+  box-shadow: 6px 6px 0 0 var(--color-bone);
+}
+@utility shadow-brutal-volt {
+  box-shadow: 6px 6px 0 0 var(--color-volt);
+}
+
+/* Outlined display text: `text-stroke` */
+@utility text-stroke {
+  -webkit-text-stroke: 1.5px var(--color-bone);
+  color: transparent;
+}
+
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--color-volt);
+    outline-offset: 3px;
+  }
+}
+
+/* Film-grain texture over the whole site (pure SVG noise, no image request) */
+.grain {
+  pointer-events: none;
+  position: fixed;
+  inset: -50%;
+  z-index: 80;
+  opacity: 0.05;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain 0.8s steps(4) infinite;
+}
+
+@keyframes grain {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-5%, 3%); }
+  50% { transform: translate(4%, -4%); }
+  75% { transform: translate(-3%, -5%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* If JavaScript never runs, the preloader still gets out of the way */
+.preloader {
+  animation: preloader-failsafe 0.4s ease 4s forwards;
+}
+
+@keyframes preloader-failsafe {
+  to { opacity: 0; visibility: hidden; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grain,
+  .animate-marquee {
+    animation: none;
+  }
+}
+
+/*
+ * Inner-page components. In the utilities layer so they win over the
+ * template's `button[type=submit]` defaults in app.css (components layer).
+ */
+@layer utilities {
+  .spin-slow {
+    animation: spin 14s linear infinite;
+  }
+
+  /* Cart quantity stepper / icon buttons: 44px touch targets */
+  .qty-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    background: transparent;
+    color: var(--color-bone);
+    box-shadow: none;
+    cursor: pointer;
+    transition: background-color 200ms ease, color 200ms ease;
+  }
+  .qty-btn:hover:not(:disabled) {
+    background: var(--color-bone);
+    color: var(--color-ink);
+    transform: none;
+  }
+  .qty-btn:disabled {
+    background: transparent;
+    color: var(--color-ink-3);
+  }
+  .remove-btn {
+    border: 2px solid var(--color-ink-3);
+  }
+  .remove-btn:hover:not(:disabled) {
+    background: var(--color-heat);
+    border-color: var(--color-heat);
+    color: var(--color-bone);
+  }
+
+  /* Discount / gift card rows in the cart summary */
+  .code-row {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .code-row input {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    padding: 0.75rem;
+    font-size: 0.875rem;
+  }
+  .code-row button {
+    background: transparent;
+    border: 2px solid var(--color-bone);
+    color: var(--color-bone);
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+  }
+  .code-row button:hover:not(:disabled) {
+    background: var(--color-bone);
+    color: var(--color-ink);
+  }
+
+  /* Big search page submit */
+  .search-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 4rem;
+    height: 4rem;
+    flex-shrink: 0;
+    padding: 0;
+    background: var(--color-volt);
+    border: 2px solid var(--color-edge);
+    border-radius: 9999px;
+    color: var(--color-on-volt);
+  }
+}
+
+/* Long-form copy from Shopify (descriptions, policies, pages, articles) */
+.rich-text {
+  color: var(--color-body);
+  font-size: 1.0625rem;
+  line-height: 1.75;
+}
+.rich-text > * + * {
+  margin-top: 1.1em;
+}
+.rich-text h1,
+.rich-text h2,
+.rich-text h3,
+.rich-text h4 {
+  color: var(--color-bone);
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1;
+  margin-top: 2em;
+  text-transform: uppercase;
+}
+.rich-text h2 { font-size: 2.25rem; }
+.rich-text h3 { font-size: 1.75rem; }
+.rich-text a {
+  color: var(--color-volt);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.rich-text ul {
+  list-style: square;
+  padding-left: 1.25rem;
+}
+.rich-text ul li::marker { color: var(--color-volt); }
+.rich-text strong { color: var(--color-bone); }
+.rich-text img { border: 2px solid var(--color-ink-3); }
+
+/* Mobile menu + drawers */
+.header-menu-mobile {
+  gap: 0.25rem !important;
+}
+.header-menu-mobile a {
+  border-bottom: 2px solid var(--color-ink-3);
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  padding: 0.5rem 0;
+  text-transform: uppercase;
+}
+aside header h3 {
+  font-family: var(--font-display);
+  font-size: 1.75rem !important;
+  letter-spacing: 0.02em;
+}
+aside .close {
+  color: var(--color-bone);
+  font-size: 1.25rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spin-slow {
+    animation: none;
+  }
+}
+
+/* Rotated tapes and stickers bleed past the edges by design; never allow sideways
+   scrolling. `clip` (unlike `hidden`) keeps position: sticky working. */
+html,
+body {
+  overflow-x: clip;
+}
+
+/* Cart: undo template layout rules that fight the redesigned components */
+@layer utilities {
+  .cart-line {
+    border-bottom: 0;
+    padding: 0;
+  }
+  .cart-line img {
+    margin-right: 0;
+  }
+  .cart-codes section,
+  .cart-codes form {
+    max-width: none;
+    padding: 0;
+  }
+  .cart-codes dl {
+    margin: 0;
+  }
+  /* Drawer: the summary flows after the lines and everything scrolls together */
+  .cart-summary-aside {
+    position: static;
+    width: auto;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid var(--color-ink-3);
+  }
+  aside .cart-main,
+  aside .cart-main.with-discount {
+    max-height: calc(100vh - var(--header-height) - 2rem);
+    overflow-y: auto;
+    padding-bottom: 2rem;
+  }
+}
